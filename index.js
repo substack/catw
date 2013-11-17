@@ -5,6 +5,9 @@ var EventEmitter = require('events').EventEmitter;
 var fs = require('fs');
 
 module.exports = function (patterns, opts, cb) {
+    if (!Array.isArray(patterns)) {
+        patterns = [ patterns ];
+    }
     if (typeof opts === 'function' || !opts) {
         cb = opts;
         opts = {}
