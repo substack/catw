@@ -1,0 +1,14 @@
+usage: catw {OPTIONS} [FILES...] -o OUTFILE
+
+  If FILES is "-", read from stdin.
+  If there is no OUTFILE, write to stdout and exit without watching.
+
+  OPTIONS:
+
+    -w, --watch    Watch for changes. Default: true except when writing to "-".
+    -v, --verbose  Print the number of bytes written whenever a file changes.
+    -h, --help     Print this help message.
+
+Make sure to escape the globs that you want `catw` to watch so your shell won't
+expand them.
+

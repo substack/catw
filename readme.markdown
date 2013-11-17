@@ -64,4 +64,63 @@ because the glob expansions of directories are sorted before concatenating.
 There is a command-line `catw` command that ships with this package.
 
 ```
+usage: catw {OPTIONS} [FILES...] -o OUTFILE
+
+  If FILES is "-", read from stdin.
+  If there is no OUTFILE, write to stdout and exit without watching.
+
+  OPTIONS:
+
+    -w, --watch    Watch for changes. Default: true except when writing to "-".
+    -v, --verbose  Print the number of bytes written whenever a file changes.
+    -h, --help     Print this help message.
+
+Make sure to escape the globs that you want `catw` to watch so your shell won't
+expand them.
 ```
+
+# methods
+
+``` js
+var catw = require('catw')
+```
+
+## var cat = catw(patterns, opts={}, cb)
+
+Create a new `cat` to concatenate `patterns`, an array of strings or a single
+string and watch each of the `patterns` for changes: new files, deleted files,
+and file updates.
+
+It `opts.watch` is `false`, don't watch for changes, only concatenate once.
+
+If specified, `cb(stream)` sets up a listener on the `'stream'` event.
+
+## cat.close()
+
+Stop listening for updates to the `patterns`.
+
+# events
+
+## cat.on('stream', function (stream) {})
+
+Each time a file matched by a pattern changes or there is a new or deleted file
+matched by a pattern, this event fires with a `stream` that will output the
+concatenated file contents.
+
+# install
+
+To get the module, with [npm](https://npmjs.org) do:
+
+```
+npm install catw
+```
+
+and to get the `catw` command do:
+
+```
+npm install -g catw
+```
+
+# license
+
+MIT
