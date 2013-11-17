@@ -4,6 +4,8 @@ concatenate file globs, watching for changes
 
 This module is just like the `cat` command, but with watching!
 
+[![build status](https://secure.travis-ci.org/substack/catw.png)](http://travis-ci.org/substack/catw)
+
 # example
 
 ``` js
