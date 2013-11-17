@@ -2,6 +2,8 @@
 
 concatenate file globs, watching for changes
 
+This module is just like the `cat` command, but with watching!
+
 # example
 
 ``` js
