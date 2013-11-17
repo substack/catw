@@ -1,0 +1,43 @@
+{
+  "name": "catw",
+  "version": "0.0.0",
+  "description": "concatenate file globs, watching for changes",
+  "main": "index.js",
+  "dependencies": {
+    "defined": "~0.0.0",
+    "glob": "~3.2.7",
+    "globwatcher": "~1.2.2",
+    "optimist": "~0.6.0",
+    "through": "~2.3.4"
+  },
+  "devDependencies": {
+    "tape": "~1.0.4",
+    "mkdirp": "~0.3.5",
+    "concat-stream": "~1.2.0"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/catw.git"
+  },
+  "homepage": "https://github.com/substack/catw",
+  "keywords": [
+    "cat",
+    "watch",
+    "build",
+    "concatenate",
+    "css",
+    "glob",
+    "update",
+    "recompile",
+    "compile"
+  ],
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "license": "MIT"
+}

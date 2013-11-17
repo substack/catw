@@ -121,6 +121,14 @@ and to get the `catw` command do:
 npm install -g catw
 ```
 
+# test
+
+With [npm](https://npmjs.org) do:
+
+```
+npm test
+```
+
 # license
 
 MIT
