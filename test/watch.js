@@ -2,7 +2,8 @@ var catw = require('../');
 var test = require('tape');
 var fs = require('fs');
 var path = require('path');
-var tmpdir = require('os').tmpdir;
+var os = require('os');
+var tmpdir = os.tmpdir || os.tmpDir;
 var mkdirp = require('mkdirp');
 var concat = require('concat-stream');
 
