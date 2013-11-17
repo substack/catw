@@ -15,11 +15,26 @@ module.exports = function (patterns, opts, cb) {
     if (!opts) opts = {};
     
     var cat = new EventEmitter;
+    cat.close = (function () {
+        var watchers = [], closed = false;
+        cat.on('watcher', function (w) {
+            if (closed) w.close();
+            watchers.push(w);
+        });
+        return function () {
+            closed = true;
+            watchers.forEach(function (w) {
+                w.close();
+                clearInterval(w.fileWatcher.timer);
+            });
+        };
+    })();
     var s = concat(function () {
         if (opts.watch !== false) {
-            watcher(function () {
+            var w = watcher(function () {
                 cat.emit('stream', concat());
-            })
+            });
+            cat.emit('watcher', w);
         }
     });
     if (cb) cat.on('stream', cb);
@@ -62,5 +77,6 @@ module.exports = function (patterns, opts, cb) {
         w.on('added', cb);
         w.on('deleted', cb);
         w.on('changed', cb);
+        return w;
     }
 };

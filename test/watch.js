@@ -15,6 +15,7 @@ test('adding and updating files', function (t) {
     fs.writeFileSync(path.join(dir, 'boop.txt'), 'boop');
     
     var cat = catw(path.join(dir, '*.txt'));
+    t.on('end', function () { cat.close() });
     var expected = [ 'beepboop', 'beep boop', 'beep boop!', 'beep boop!!!' ];
     
     cat.on('stream', function (stream) {
