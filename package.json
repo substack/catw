@@ -1,8 +1,11 @@
 {
   "name": "catw",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "concatenate file globs, watching for changes",
   "main": "index.js",
+  "bin": {
+    "catw": "bin/cmd.js"
+  },
   "dependencies": {
     "defined": "~0.0.0",
     "glob": "~3.2.7",
