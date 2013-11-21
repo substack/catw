@@ -4,6 +4,7 @@ var spawn = require('child_process').spawn;
 var fs = require('fs');
 var path = require('path');
 var os = require('os');
+var split = require('split');
 
 var tmpdir = os.tmpdir || os.tmpDir;
 var mkdirp = require('mkdirp');
@@ -24,18 +25,18 @@ test('exec transform', function (t) {
         '-c', __dirname + '/bin/uc.js',
         '-o', outfile,
         '-v',
-        path.join(dir, 'beep.txt'),
-        path.join(dir, 'boop.txt')
+        dir +  '/*.txt'
     ]);
     ps.stderr.pipe(process.stderr);
     ps.stdout.pipe(process.stdout);
+    t.on('end', function () { ps.kill() });
     
     var expected = [ 'BEEPboop', 'BEEP boop', 'BEEP boop!', 'BEEP boop!!!' ];
-    ps.stdout.on('data', function (buf) {
+    ps.stdout.pipe(split()).on('data', function (buf) {
         fs.readFile(outfile, 'utf8', function (err, src) {
             if (err) t.fail(err);
             t.equal(src, expected.shift());
-            nextUpdate();
+            setTimeout(nextUpdate, 100);
         });
     });
     
