@@ -3,6 +3,7 @@ var glob = require('glob');
 var through = require('through');
 var EventEmitter = require('events').EventEmitter;
 var fs = require('fs');
+var combine = require('stream-combiner');
 
 module.exports = function (patterns, opts, cb) {
     if (!Array.isArray(patterns)) {
@@ -13,6 +14,12 @@ module.exports = function (patterns, opts, cb) {
         opts = {}
     }
     if (!opts) opts = {};
+    
+    var transform = makeTransform(
+        Array.isArray(opts.transform)
+        ? opts.transform
+        : [ opts.transform ].filter(Boolean)
+    );
     
     var cat = new EventEmitter;
     cat.close = (function () {
@@ -29,7 +36,7 @@ module.exports = function (patterns, opts, cb) {
             });
         };
     })();
-    var s = concat(function () {
+    var initStream = concat(function () {
         if (opts.watch !== false) {
             var w = watcher(function () {
                 cat.emit('stream', concat());
@@ -37,9 +44,10 @@ module.exports = function (patterns, opts, cb) {
             cat.emit('watcher', w);
         }
     });
+    
     if (cb) cat.on('stream', cb);
     process.nextTick(function () {
-        cat.emit('stream', s);
+        cat.emit('stream', initStream);
     });
     return cat;
     
@@ -59,7 +67,9 @@ module.exports = function (patterns, opts, cb) {
                     if (files.length === 0) return nextPattern(index + 1);
                     
                     var file = files.shift();
-                    var rs = fs.createReadStream(file);
+                    var rs = fs.createReadStream(file)
+                        .pipe(transform(file))
+                    ;
                     rs.on('error', function (err) { stream.emit('error', err) });
                     
                     rs.pipe(stream, { end: false });
@@ -80,3 +90,14 @@ module.exports = function (patterns, opts, cb) {
         return w;
     }
 };
+
+function makeTransform (xs) {
+    if (xs.length === 0) return function (file) {
+        return through();
+    };
+    return function (file) {
+        return combine.apply(null, xs.map(function (f) {
+            return f(file);
+        }));
+    };
+}

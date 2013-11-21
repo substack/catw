@@ -6,6 +6,7 @@ var os = require('os');
 var tmpdir = os.tmpdir || os.tmpDir;
 var mkdirp = require('mkdirp');
 var concat = require('concat-stream');
+var through = require('through');
 
 test('source transform', function (t) {
     t.plan(4);
