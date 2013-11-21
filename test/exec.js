@@ -35,6 +35,7 @@ test('exec transform', function (t) {
         fs.readFile(outfile, 'utf8', function (err, src) {
             if (err) t.fail(err);
             t.equal(src, expected.shift());
+            nextUpdate();
         });
     });
     
@@ -44,12 +45,11 @@ test('exec transform', function (t) {
         [ 'c.txt', '!!' ]
     ];
     
-    setTimeout(function next () {
+    function nextUpdate () {
         if (updates.length === 0) return;
         var file = updates.shift();
         fs.writeFile(path.join(dir, file[0]), file[1], function (err) {
             if (err) return t.fail(err)
-            else setTimeout(next, 200)
         });
-    }, 200);
+    }
 });

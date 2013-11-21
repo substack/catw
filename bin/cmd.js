@@ -53,7 +53,7 @@ var opts = {
     })
 };
 
-var cat = catw(argv._, opts, function (stream) {
+catw(argv._, opts, function (stream) {
     if (outfile === '-') return stream.pipe(process.stdout);
     var bytes = 0;
     stream.on('data', function (buf) { bytes += buf.length });
