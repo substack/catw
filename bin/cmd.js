@@ -2,6 +2,11 @@
 
 var fs = require('fs');
 var path = require('path');
+var spawn = require('child_process').spawn;
+var parseQuote = require('shell-quote').parse;
+var combine = require('stream-combiner');
+var copy = require('shallow-copy');
+
 var argv = require('optimist').argv;
 var defined = require('defined');
 var outfile = argv.o || '-';
@@ -23,7 +28,29 @@ if (argv._.length === 0) {
 
 var catw = require('../');
 
-var opts = { watch: defined(argv.w, argv.watch, outfile !== '-') };
+var opts = {
+    watch: defined(argv.w, argv.watch, outfile !== '-'),
+    transform: [].concat(argv.c).filter(Boolean).map(function (cmd) {
+        return function (file) {
+            var env = copy(process.env);
+            env.FILE = file;
+            var parts = parseQuote(cmd, env);
+            
+            var ps = spawn(parts[0], parts.slice(1), { env: env });
+            ps.on('exit', function (code) {
+                if (code !== 0) {
+                    outer.emit('error', new Error(
+                        'non-zero exit code in command: ' + cmd
+                    ));
+                }
+            });
+            ps.stderr.pipe(process.stderr);
+            var outer = combine(ps.stdin, ps.stdout);
+            return outer;
+        };
+    })
+};
+
 var cat = catw(argv._, opts, function (stream) {
     if (outfile === '-') return stream.pipe(process.stdout);
     
@@ -42,5 +69,5 @@ var cat = catw(argv._, opts, function (stream) {
                 else if (verbose) console.log(bytes + ' bytes written')
             });
         });
-    })
+    });
 });

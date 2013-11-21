@@ -19,16 +19,19 @@ test('exec transform', function (t) {
     
     fs.writeFileSync(path.join(dir, 'beep.txt'), 'beep');
     fs.writeFileSync(path.join(dir, 'boop.txt'), 'boop');
-    
     var ps = spawn(process.execPath, [
         __dirname + '/../bin/cmd.js',
-        '-e', __dirname + '/bin/uc.js',
+        '-c', __dirname + '/bin/uc.js',
         '-o', outfile,
-        '-v'
+        '-v',
+        path.join(dir, 'beep.txt'),
+        path.join(dir, 'boop.txt')
     ]);
+    ps.stderr.pipe(process.stderr);
+    ps.stdout.pipe(process.stdout);
     
     var expected = [ 'BEEPboop', 'BEEP boop', 'BEEP boop!', 'BEEP boop!!!' ];
-    ps.stdout.on('data', function () {
+    ps.stdout.on('data', function (buf) {
         fs.readFile(outfile, 'utf8', function (err, src) {
             if (err) t.fail(err);
             t.equal(src, expected.shift());
