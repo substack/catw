@@ -33,6 +33,7 @@ test('exec transform', function (t) {
     
     var expected = [ 'BEEPboop', 'BEEP boop', 'BEEP boop!', 'BEEP boop!!!' ];
     ps.stdout.pipe(split()).on('data', function (buf) {
+        if (buf.length === 0) return;
         fs.readFile(outfile, 'utf8', function (err, src) {
             if (err) t.fail(err);
             t.equal(src, expected.shift());

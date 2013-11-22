@@ -31,6 +31,7 @@ test('source transform', function (t) {
     cat.on('stream', function (stream) {
         stream.pipe(concat(function (body) {
             t.equal(body.toString('utf8'), expected.shift());
+            setTimeout(nextUpdate, 100);
         }));
     });
     
@@ -40,12 +41,11 @@ test('source transform', function (t) {
         [ 'c.txt', '!!' ]
     ];
     
-    setTimeout(function next () {
+    function nextUpdate () {
         if (updates.length === 0) return;
         var file = updates.shift();
         fs.writeFile(path.join(dir, file[0]), file[1], function (err) {
             if (err) return t.fail(err)
-            else setTimeout(next, 200)
         });
-    }, 200);
+    }
 });
