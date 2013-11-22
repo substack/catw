@@ -6,6 +6,8 @@ usage: catw {OPTIONS} [FILES...] -o OUTFILE
   OPTIONS:
 
     -w, --watch    Watch for changes. Default: true except when writing to "-".
+    -c, --command  Execute a transform command for file before concatenating.
+                   The env var $FILE will be set for each file path.
     -v, --verbose  Print the number of bytes written whenever a file changes.
     -h, --help     Print this help message.
 
