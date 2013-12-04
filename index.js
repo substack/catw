@@ -22,6 +22,7 @@ module.exports = function (patterns, opts, cb) {
     );
     
     var cat = new EventEmitter;
+    var intervalHack;
     cat.close = (function () {
         var watchers = [], closed = false;
         cat.on('watcher', function (w) {
@@ -34,6 +35,7 @@ module.exports = function (patterns, opts, cb) {
                 w.close();
                 clearInterval(w.fileWatcher.timer);
             });
+            if (intervalHack) clearInterval(intervalHack);
         };
     })();
     var initStream = concat(function () {
@@ -63,6 +65,9 @@ module.exports = function (patterns, opts, cb) {
             glob(patterns[index], function (err, files) {
                 if (err) files = [];
                 files.sort();
+                if (files.length === 0) {
+                    intervalHack = setInterval(function () {}, 1e8);
+                }
                 (function nextFile () {
                     if (files.length === 0) return nextPattern(index + 1);
                     
