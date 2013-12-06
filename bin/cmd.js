@@ -6,6 +6,7 @@ var spawn = require('child_process').spawn;
 var parseQuote = require('shell-quote').parse;
 var combine = require('stream-combiner');
 var copy = require('shallow-copy');
+var resolve = require('resolve');
 
 var argv = require('minimist')(process.argv.slice(2), {
     'boolean': [ 'v' ]
@@ -30,27 +31,36 @@ if (argv._.length === 0) {
 
 var catw = require('../');
 
+var commands = [].concat(argv.c).filter(Boolean).map(function (cmd) {
+    return function (file) {
+        var env = copy(process.env);
+        env.FILE = file;
+        var parts = parseQuote(cmd, env);
+        
+        var ps = spawn(parts[0], parts.slice(1), { env: env });
+        ps.on('exit', function (code) {
+            if (code !== 0) {
+                outer.emit('error', new Error(
+                    'non-zero exit code in command: ' + cmd
+                ));
+            }
+        });
+        ps.stderr.pipe(process.stderr);
+        var outer = combine(ps.stdin, ps.stdout);
+        return outer;
+    };
+});
+
+var transforms = [].concat(argv.t).filter(Boolean).map(function (file) {
+    if (/^[.\/]/.test(file)) {
+        return require(path.resolve(file));
+    }
+    return require(resolve.sync(file, { basedir: process.cwd() }));
+});
+
 var opts = {
     watch: defined(argv.w, argv.watch, outfile !== '-'),
-    transform: [].concat(argv.c).filter(Boolean).map(function (cmd) {
-        return function (file) {
-            var env = copy(process.env);
-            env.FILE = file;
-            var parts = parseQuote(cmd, env);
-            
-            var ps = spawn(parts[0], parts.slice(1), { env: env });
-            ps.on('exit', function (code) {
-                if (code !== 0) {
-                    outer.emit('error', new Error(
-                        'non-zero exit code in command: ' + cmd
-                    ));
-                }
-            });
-            ps.stderr.pipe(process.stderr);
-            var outer = combine(ps.stdin, ps.stdout);
-            return outer;
-        };
-    })
+    transform: transforms.concat(commands)
 };
 
 catw(argv._, opts, function (stream) {
