@@ -75,15 +75,20 @@ usage: catw {OPTIONS} [FILES...] -o OUTFILE
 
   OPTIONS:
 
-    -w, --watch    Watch for changes. Default: true except when writing to "-".
-    -c, --command  Execute a transform command for file before concatenating.
-                   The env var $FILE will be set for each file path.
-    -v, --verbose  Print the number of bytes written whenever a file changes.
-    -h, --help     Print this help message.
+    -w, --watch      Watch for changes.
+                     Default: true except when writing to stdout.
+ 
+    -c, --command    Execute a transform command for file before concatenating.
+                     The env var $FILE will be set for each file path.
+ 
+    -t, --transform  Transform each file using a module.
+
+    -v, --verbose    Print the number of bytes written whenever a file changes.
+
+    -h, --help       Print this help message.
 
 Make sure to escape the globs that you want `catw` to watch so your shell won't
 expand them.
-
 ```
 
 # methods
@@ -99,6 +104,9 @@ string and watch each of the `patterns` for changes: new files, deleted files,
 and file updates.
 
 It `opts.watch` is `false`, don't watch for changes, only concatenate once.
+
+You can pass in a `opts.transform(file)` function that returns a transform
+stream to modify file contents before the contents are written to the bundle.
 
 If specified, `cb(stream)` sets up a listener on the `'stream'` event.
 
