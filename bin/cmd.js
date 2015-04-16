@@ -11,14 +11,21 @@ var resolve = require('resolve');
 var argv = require('minimist')(process.argv.slice(2), {
     'boolean': [ 'v', 'w' ],
     'default': {
-        'w': true
+        w: true
+    },
+    alias: {
+        'v': 'verbose',
+        'c': 'command',
+        't': 'transform',
+        'w': 'watch',
+        'h': 'help'
     }
 });
 var defined = require('defined');
 var outfile = argv.o || '-';
-var verbose = argv.v || argv.verbose;
+var verbose = argv.v;
 
-if (argv.h || argv.help) {
+if (argv.h) {
     return fs.createReadStream(__dirname + '/usage.txt').pipe(process.stdout);
 }
 
