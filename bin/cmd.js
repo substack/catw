@@ -9,7 +9,10 @@ var copy = require('shallow-copy');
 var resolve = require('resolve');
 
 var argv = require('minimist')(process.argv.slice(2), {
-    'boolean': [ 'v' ]
+    'boolean': [ 'v', 'w' ],
+    'default': {
+        'w': true
+    }
 });
 var defined = require('defined');
 var outfile = argv.o || '-';
