@@ -1,6 +1,6 @@
 {
   "name": "catw",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "concatenate file globs, watching for changes",
   "main": "index.js",
   "bin": {
