@@ -8,10 +8,16 @@ var combine = require('stream-combiner');
 var copy = require('shallow-copy');
 var resolve = require('resolve');
 
-var argv = require('minimist')(process.argv.slice(2), {
+var minimist = require('minimist');
+var defined = require('defined');
+
+var argv = minimist(process.argv.slice(2));
+var outfile = argv.o || '-';
+
+argv = minimist(process.argv.slice(2), {
     'boolean': [ 'v', 'w' ],
     'default': {
-        w: true
+        w: outfile !== '-'
     },
     alias: {
         'v': 'verbose',
@@ -21,8 +27,6 @@ var argv = require('minimist')(process.argv.slice(2), {
         'h': 'help'
     }
 });
-var defined = require('defined');
-var outfile = argv.o || '-';
 var verbose = argv.v;
 
 if (argv.h) {
@@ -69,7 +73,7 @@ var transforms = [].concat(argv.t).filter(Boolean).map(function (file) {
 });
 
 var opts = {
-    watch: defined(argv.w, argv.watch, outfile !== '-'),
+    watch: defined(argv.watch, outfile !== '-'),
     transform: transforms.concat(commands)
 };
 
