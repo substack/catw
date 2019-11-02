@@ -13,7 +13,7 @@
     "minimist": "~1.1.1",
     "through": "~2.3.4",
     "stream-combiner": "~0.0.2",
-    "shell-quote": "~1.4.0",
+    "shell-quote": "~1.7.2",
     "shallow-copy": "~0.0.1",
     "resolve": "~0.6.1"
   },
