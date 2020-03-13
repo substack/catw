@@ -10,7 +10,7 @@
     "defined": "~0.0.0",
     "glob": "~3.2.7",
     "globwatcher": "~1.2.2",
-    "minimist": "~1.1.1",
+    "minimist": "~1.2.5",
     "through": "~2.3.4",
     "stream-combiner": "~0.0.2",
     "shell-quote": "~1.4.0",
